@@ -81,8 +81,12 @@ class _PriceScreenState extends State<PriceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('🤑 Coin Ticker'),
-      ),
+          title: Center(
+              child: Text(
+            'CryptoEx',
+            style: TextStyle(letterSpacing: 2, fontSize: 26),
+          )),
+          automaticallyImplyLeading: false),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -90,7 +94,7 @@ class _PriceScreenState extends State<PriceScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
             child: Card(
-              color: Colors.lightBlueAccent,
+              color: Colors.white24,
               elevation: 5.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -119,6 +123,7 @@ class _PriceScreenState extends State<PriceScreen> {
           ),
         ],
       ),
+      backgroundColor: Colors.black26,
     );
   }
 }
