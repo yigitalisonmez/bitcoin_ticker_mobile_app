@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'coin_data.dart';
+import 'dart:io' show Platform;
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -7,6 +10,9 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
+  //DEFAULT
+  String selectedCurrency = 'USD';
+
   @override
   void initState() {
     super.initState();
@@ -18,6 +24,42 @@ class _PriceScreenState extends State<PriceScreen> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
     super.dispose();
+  }
+
+  //FUNCTIONS
+  //ANDROID PICKER
+  DropdownButton androidDropdownPicker() {
+    List<DropdownMenuItem<String>> newDropdownMenu = [];
+    for (String currency in currenciesList) {
+      newDropdownMenu.add(DropdownMenuItem<String>(
+        child: Text(currency),
+        value: currency,
+      ));
+    }
+
+    return DropdownButton(
+        value: selectedCurrency,
+        items: newDropdownMenu,
+        onChanged: (value) {
+          setState(() {
+            selectedCurrency = value!;
+          });
+        });
+  }
+  //IOS PICKER
+
+  CupertinoPicker iosDropdownPicker() {
+    List<Text> dropdownItems = [];
+    for (String currencies in currenciesList) {
+      dropdownItems.add(Text(currencies));
+    }
+
+    return CupertinoPicker(
+        itemExtent: 32.0,
+        onSelectedItemChanged: (selectedIndex) {
+          selectedCurrency = dropdownItems[selectedIndex].data!;
+        },
+        children: dropdownItems.toList());
   }
 
   @override
@@ -38,7 +80,7 @@ class _PriceScreenState extends State<PriceScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: Padding(
+              child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
                   '1 BTC = ? USD',
@@ -56,28 +98,15 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: DropdownButton<String>(
-              items: [
-                DropdownMenuItem(
-                  child: Text('USD'),
-                  value: 'USD',
-                ),
-                DropdownMenuItem(
-                  child: Text('EUR'),
-                  value: 'EUR',
-                ),
-                DropdownMenuItem(
-                  child: Text('GBP'),
-                  value: 'GBP',
-                )
-              ],
-              onChanged: (value) {
-                print(value);
-              },
-            ),
+            child: Platform.isAndroid
+                ? androidDropdownPicker()
+                : iosDropdownPicker(),
           ),
         ],
       ),
     );
   }
 }
+
+/*
+*/
