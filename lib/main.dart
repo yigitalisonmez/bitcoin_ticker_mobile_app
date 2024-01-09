@@ -10,7 +10,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
-          primaryColor: Colors.blue, scaffoldBackgroundColor: Colors.black26),
+          primaryColor: Colors.white30,
+          scaffoldBackgroundColor: Colors.white30),
       home: LoadingScreen(),
     );
   }

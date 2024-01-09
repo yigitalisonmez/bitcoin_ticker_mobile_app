@@ -8,14 +8,17 @@ import 'dart:io' show Platform;
 class PriceScreen extends StatefulWidget {
   @override
   _PriceScreenState createState() => _PriceScreenState();
+
+  PriceScreen(this.networkHelper);
+
+  NetworkHelper networkHelper;
 }
 
 class _PriceScreenState extends State<PriceScreen> {
   //DEFAULT
   int exchangeRate = 0;
   String selectedCurrency = 'USD';
-  final NetworkHelper networkHelper = NetworkHelper(
-      'https://rest.coinapi.io/v1/exchangerate/BTC/apikey-23A294EF-CB49-4443-B5C7-14EAA28F6547/');
+
   @override
   void initState() {
     super.initState();
@@ -23,7 +26,6 @@ class _PriceScreenState extends State<PriceScreen> {
     Platform.isAndroid
         ? selectedCurrency = 'USD'
         : selectedCurrency = currenciesList[0];
-    networkHelper.fetchData();
   }
 
   @override
@@ -50,8 +52,8 @@ class _PriceScreenState extends State<PriceScreen> {
         onChanged: (value) {
           setState(() {
             selectedCurrency = value!;
-            exchangeRate =
-                networkHelper.getExchangeRateByCurrency(selectedCurrency);
+            exchangeRate = widget.networkHelper
+                .getExchangeRateByCurrency(selectedCurrency);
           });
         });
   }
@@ -68,8 +70,8 @@ class _PriceScreenState extends State<PriceScreen> {
         onSelectedItemChanged: (selectedIndex) {
           setState(() {
             selectedCurrency = dropdownItems[selectedIndex].data!;
-            exchangeRate =
-                networkHelper.getExchangeRateByCurrency(selectedCurrency);
+            exchangeRate = widget.networkHelper
+                .getExchangeRateByCurrency(selectedCurrency);
           });
         },
         children: dropdownItems.toList());
@@ -110,7 +112,7 @@ class _PriceScreenState extends State<PriceScreen> {
             height: 150.0,
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightBlue,
+            color: Colors.white30,
             child: !Platform.isAndroid
                 ? androidDropdownPicker()
                 : iosDropdownPicker(),
