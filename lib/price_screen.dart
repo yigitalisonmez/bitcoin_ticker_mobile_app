@@ -1,3 +1,4 @@
+import 'package:bitcoin_ticker_flutter/network_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -11,12 +12,18 @@ class PriceScreen extends StatefulWidget {
 
 class _PriceScreenState extends State<PriceScreen> {
   //DEFAULT
+  int exchangeRate = 0;
   String selectedCurrency = 'USD';
-
+  final NetworkHelper networkHelper = NetworkHelper(
+      'https://rest.coinapi.io/v1/exchangerate/BTC/apikey-23A294EF-CB49-4443-B5C7-14EAA28F6547/');
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    Platform.isAndroid
+        ? selectedCurrency = 'USD'
+        : selectedCurrency = currenciesList[0];
+    networkHelper.fetchData();
   }
 
   @override
@@ -43,11 +50,13 @@ class _PriceScreenState extends State<PriceScreen> {
         onChanged: (value) {
           setState(() {
             selectedCurrency = value!;
+            exchangeRate =
+                networkHelper.getExchangeRateByCurrency(selectedCurrency);
           });
         });
   }
-  //IOS PICKER
 
+  //IOS PICKER
   CupertinoPicker iosDropdownPicker() {
     List<Text> dropdownItems = [];
     for (String currencies in currenciesList) {
@@ -57,7 +66,11 @@ class _PriceScreenState extends State<PriceScreen> {
     return CupertinoPicker(
         itemExtent: 32.0,
         onSelectedItemChanged: (selectedIndex) {
-          selectedCurrency = dropdownItems[selectedIndex].data!;
+          setState(() {
+            selectedCurrency = dropdownItems[selectedIndex].data!;
+            exchangeRate =
+                networkHelper.getExchangeRateByCurrency(selectedCurrency);
+          });
         },
         children: dropdownItems.toList());
   }
@@ -80,10 +93,10 @@ class _PriceScreenState extends State<PriceScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  '1 BTC = ? USD',
+                  '1 BTC = ${exchangeRate} $selectedCurrency',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -98,7 +111,7 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: Platform.isAndroid
+            child: !Platform.isAndroid
                 ? androidDropdownPicker()
                 : iosDropdownPicker(),
           ),
